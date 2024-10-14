@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Tempo de geração: 14-Out-2024 às 02:34
+-- Tempo de geração: 14-Out-2024 às 03:32
 -- Versão do servidor: 10.4.25-MariaDB
 -- versão do PHP: 8.1.10
 
@@ -50,6 +50,14 @@ CREATE TABLE `jogador` (
   `Moeda` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+--
+-- Extraindo dados da tabela `jogador`
+--
+
+INSERT INTO `jogador` (`ID_Jogador`, `Usuario`, `Email`, `Senha`, `Data`, `TipoJogador`, `Moeda`) VALUES
+(16, 'dsad', 'sads', 'd41d8cd98f00b204e9800998ecf8427e', '2024-10-14', '', 0),
+(17, 'asd', 'asdf', 'd41d8cd98f00b204e9800998ecf8427e', '2024-10-14', '', 0);
+
 -- --------------------------------------------------------
 
 --
@@ -66,6 +74,34 @@ CREATE TABLE `jogadorpartida` (
 -- --------------------------------------------------------
 
 --
+-- Estrutura da tabela `jogadorperks`
+--
+
+CREATE TABLE `jogadorperks` (
+  `ID_JogadorPerks` int(11) NOT NULL,
+  `ID_Jogador` int(11) NOT NULL,
+  `ID_Perks` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura da tabela `pacotemoeda`
+--
+
+CREATE TABLE `pacotemoeda` (
+  `pacote` int(11) NOT NULL,
+  `nome_pacote` varchar(100) NOT NULL,
+  `preco` decimal(10,2) NOT NULL,
+  `qtd_moedas` int(11) NOT NULL,
+  `oferta` tinyint(1) DEFAULT 0,
+  `tipo_jogador` enum('pirata','marinha') NOT NULL,
+  `moedas` decimal(10,2) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
 -- Estrutura da tabela `partida`
 --
 
@@ -73,6 +109,17 @@ CREATE TABLE `partida` (
   `ID_Partida` int(11) NOT NULL,
   `DataInicio` datetime NOT NULL,
   `DataFim` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura da tabela `perks`
+--
+
+CREATE TABLE `perks` (
+  `ID_perks` int(11) NOT NULL,
+  `nome` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
@@ -101,10 +148,30 @@ ALTER TABLE `jogadorpartida`
   ADD KEY `ID_Partida` (`ID_Partida`);
 
 --
+-- Índices para tabela `jogadorperks`
+--
+ALTER TABLE `jogadorperks`
+  ADD PRIMARY KEY (`ID_JogadorPerks`),
+  ADD KEY `ID_Jogador` (`ID_Jogador`),
+  ADD KEY `ID_Perks` (`ID_Perks`);
+
+--
+-- Índices para tabela `pacotemoeda`
+--
+ALTER TABLE `pacotemoeda`
+  ADD PRIMARY KEY (`pacote`);
+
+--
 -- Índices para tabela `partida`
 --
 ALTER TABLE `partida`
   ADD PRIMARY KEY (`ID_Partida`);
+
+--
+-- Índices para tabela `perks`
+--
+ALTER TABLE `perks`
+  ADD PRIMARY KEY (`ID_perks`);
 
 --
 -- AUTO_INCREMENT de tabelas despejadas
@@ -120,7 +187,7 @@ ALTER TABLE `compramoeda`
 -- AUTO_INCREMENT de tabela `jogador`
 --
 ALTER TABLE `jogador`
-  MODIFY `ID_Jogador` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `ID_Jogador` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT de tabela `jogadorpartida`
@@ -129,10 +196,28 @@ ALTER TABLE `jogadorpartida`
   MODIFY `ID_JogadorPartida` int(11) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT de tabela `jogadorperks`
+--
+ALTER TABLE `jogadorperks`
+  MODIFY `ID_JogadorPerks` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de tabela `pacotemoeda`
+--
+ALTER TABLE `pacotemoeda`
+  MODIFY `pacote` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT de tabela `partida`
 --
 ALTER TABLE `partida`
   MODIFY `ID_Partida` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de tabela `perks`
+--
+ALTER TABLE `perks`
+  MODIFY `ID_perks` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- Restrições para despejos de tabelas
@@ -150,6 +235,13 @@ ALTER TABLE `compramoeda`
 ALTER TABLE `jogadorpartida`
   ADD CONSTRAINT `jogadorpartida_ibfk_1` FOREIGN KEY (`ID_Jogador`) REFERENCES `jogador` (`ID_Jogador`) ON DELETE CASCADE,
   ADD CONSTRAINT `jogadorpartida_ibfk_2` FOREIGN KEY (`ID_Partida`) REFERENCES `partida` (`ID_Partida`) ON DELETE CASCADE;
+
+--
+-- Limitadores para a tabela `jogadorperks`
+--
+ALTER TABLE `jogadorperks`
+  ADD CONSTRAINT `jogadorperks_ibfk_1` FOREIGN KEY (`ID_Jogador`) REFERENCES `jogador` (`ID_Jogador`) ON DELETE CASCADE,
+  ADD CONSTRAINT `jogadorperks_ibfk_2` FOREIGN KEY (`ID_Perks`) REFERENCES `perks` (`ID_perks`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
