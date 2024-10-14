@@ -12,8 +12,7 @@ try {
     if ($jogadorId = mysqli_fetch_assoc($resultado)) 
     {
         echo $jogadorId["ID_Jogador"];
-    } 
-    
+    }
     else 
     {
         echo "-1";
