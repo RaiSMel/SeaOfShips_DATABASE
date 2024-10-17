@@ -247,3 +247,48 @@ COMMIT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+
+DELIMITER $$
+
+CREATE PROCEDURE VerificarEstatisticasJogador(
+    IN jogador_id INT
+)
+BEGIN
+    DECLARE v_partidas INT DEFAULT 0;
+    DECLARE v_vitorias INT DEFAULT 0;
+    DECLARE v_derrotas INT DEFAULT 0;
+    DECLARE v_barcos_afundados INT DEFAULT 0;
+
+    -- Contar o número total de partidas que o jogador participou
+    SELECT COUNT(*)
+    INTO v_partidas
+    FROM JogadorPartida
+    WHERE ID_Jogador = jogador_id;
+
+    -- Contar o número de vitórias (assumindo que o Status seja 'Vitoria' para vitórias)
+    SELECT COUNT(*)
+    INTO v_vitorias
+    FROM JogadorPartida
+    WHERE ID_Jogador = jogador_id AND Status = 'Vitoria';
+
+    -- Contar o número de derrotas (assumindo que o Status seja 'Derrota' para derrotas)
+    SELECT COUNT(*)
+    INTO v_derrotas
+    FROM JogadorPartida
+    WHERE ID_Jogador = jogador_id AND Status = 'Derrota';
+
+    -- Obter a quantidade de barcos afundados do jogador na tabela 'jogador'
+    SELECT BarcosAfundados
+    INTO v_barcos_afundados
+    FROM jogador
+    WHERE ID_Jogador = jogador_id;
+
+    -- Exibir os resultados
+    SELECT 
+        v_partidas AS Partidas_Participadas,
+        v_vitorias AS Partidas_Ganhas,
+        v_derrotas AS Partidas_Perdidas,
+        v_barcos_afundados AS Barcos_Afundados;
+END$$
+
+DELIMITER ;
