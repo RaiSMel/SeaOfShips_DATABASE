@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Tempo de geração: 14-Out-2024 às 03:32
+-- Tempo de geração: 18-Nov-2024 às 03:47
 -- Versão do servidor: 10.4.25-MariaDB
 -- versão do PHP: 8.1.10
 
@@ -55,8 +55,9 @@ CREATE TABLE `jogador` (
 --
 
 INSERT INTO `jogador` (`ID_Jogador`, `Usuario`, `Email`, `Senha`, `Data`, `TipoJogador`, `Moeda`) VALUES
-(16, 'dsad', 'sads', 'd41d8cd98f00b204e9800998ecf8427e', '2024-10-14', '', 0),
-(17, 'asd', 'asdf', 'd41d8cd98f00b204e9800998ecf8427e', '2024-10-14', '', 0);
+(21, 'Rogein', 'teste@gmail.com', '25d55ad283aa400af464c76d713c07ad', '2024-10-14', '', 0),
+(22, 'Rai', 'rai@gmail.com.br', '25d55ad283aa400af464c76d713c07ad', '2024-10-16', '', 0),
+(23, 'Ola', 'ola@gmail.com', '25d55ad283aa400af464c76d713c07ad', '2024-10-24', '', 0);
 
 -- --------------------------------------------------------
 
@@ -68,8 +69,17 @@ CREATE TABLE `jogadorpartida` (
   `ID_JogadorPartida` int(11) NOT NULL,
   `ID_Jogador` int(11) NOT NULL,
   `ID_Partida` int(11) NOT NULL,
-  `Status` varchar(20) NOT NULL
+  `Status` varchar(20) NOT NULL,
+  `BarcosAfundados` int(11) DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Extraindo dados da tabela `jogadorpartida`
+--
+
+INSERT INTO `jogadorpartida` (`ID_JogadorPartida`, `ID_Jogador`, `ID_Partida`, `Status`, `BarcosAfundados`) VALUES
+(5, 22, 4, 'Vitoria', 5),
+(6, 23, 4, 'Derrota', 2);
 
 -- --------------------------------------------------------
 
@@ -110,6 +120,13 @@ CREATE TABLE `partida` (
   `DataInicio` datetime NOT NULL,
   `DataFim` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Extraindo dados da tabela `partida`
+--
+
+INSERT INTO `partida` (`ID_Partida`, `DataInicio`, `DataFim`) VALUES
+(4, '2024-11-17 18:56:35', NULL);
 
 -- --------------------------------------------------------
 
@@ -187,13 +204,13 @@ ALTER TABLE `compramoeda`
 -- AUTO_INCREMENT de tabela `jogador`
 --
 ALTER TABLE `jogador`
-  MODIFY `ID_Jogador` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `ID_Jogador` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- AUTO_INCREMENT de tabela `jogadorpartida`
 --
 ALTER TABLE `jogadorpartida`
-  MODIFY `ID_JogadorPartida` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `ID_JogadorPartida` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT de tabela `jogadorperks`
@@ -211,7 +228,7 @@ ALTER TABLE `pacotemoeda`
 -- AUTO_INCREMENT de tabela `partida`
 --
 ALTER TABLE `partida`
-  MODIFY `ID_Partida` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `ID_Partida` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de tabela `perks`
@@ -244,16 +261,12 @@ ALTER TABLE `jogadorperks`
   ADD CONSTRAINT `jogadorperks_ibfk_2` FOREIGN KEY (`ID_Perks`) REFERENCES `perks` (`ID_perks`) ON DELETE CASCADE;
 COMMIT;
 
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 
 DELIMITER $$
-
-CREATE PROCEDURE VerificarEstatisticasJogador(
-    IN jogador_id INT
-)
-BEGIN
+--
+-- Procedimentos
+--
+CREATE DEFINER=`root`@`localhost` PROCEDURE `VerificarEstatisticasJogador` (IN `jogador_id` INT)   BEGIN
     DECLARE v_partidas INT DEFAULT 0;
     DECLARE v_vitorias INT DEFAULT 0;
     DECLARE v_derrotas INT DEFAULT 0;
@@ -277,14 +290,15 @@ BEGIN
     FROM JogadorPartida
     WHERE ID_Jogador = jogador_id AND Status = 'Derrota';
 
-    -- Obter a quantidade de barcos afundados do jogador na tabela 'jogador'
-    SELECT BarcosAfundados
+    -- Obter a quantidade de barcos afundados do jogador na tabela 'JogadorPartida'
+    SELECT SUM(BarcosAfundados)
     INTO v_barcos_afundados
-    FROM jogador
+    FROM JogadorPartida
     WHERE ID_Jogador = jogador_id;
 
-    -- Exibir os resultados
+    -- Exibir os resultados junto com o ID do jogador
     SELECT 
+        jogador_id AS ID_Jogador,
         v_partidas AS Partidas_Participadas,
         v_vitorias AS Partidas_Ganhas,
         v_derrotas AS Partidas_Perdidas,
@@ -292,3 +306,8 @@ BEGIN
 END$$
 
 DELIMITER ;
+
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
