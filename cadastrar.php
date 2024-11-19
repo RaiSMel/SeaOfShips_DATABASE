@@ -19,7 +19,7 @@ try{
     }
     else{
         $senha = md5($senha);
-        $cadastro = "INSERT INTO `jogador` (`Usuario`,`Email`, `Senha` ,`Data`, `TipoJogador`) VALUES ('$usuario', '$email', '$senha', '$data', '$tipoJogador');";        
+        $cadastro = "INSERT INTO `jogador` (`Usuario`,`Email`, `Senha` ,`Data`, `TipoJogador`, `Moeda`) VALUES ('$usuario', '$email', '$senha', '$data', '$tipoJogador', 500);";        
         $response = mysqli_query($conexao, $cadastro);
         if($response){
             Echo 0;
